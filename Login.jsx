@@ -1,20 +1,39 @@
+// Login.jsx
 
 import React, { useState } from 'react';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isVerificationRequired, setIsVerificationRequired] = useState(false);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const handleLogin = (event) => {
     event.preventDefault();
-    // Perform authentication logic here (e.g., send credentials to server)
-    // For simplicity, let's assume authentication is successful if the fields are not empty
-    if (username && password) {
-      setIsLoggedIn(true);
-      alert('Login successful!');
+    if (isVerificationRequired) {
+      // Perform verification logic
+      if (verificationCode === '123456') { // Mock verification code
+        setIsLoggedIn(true);
+        alert('Login successful!');
+      } else {
+        alert('Invalid verification code. Please try again.');
+      }
     } else {
-      alert('Please enter valid username and password');
+      // Perform initial login logic
+      if (isSignUpMode) {
+        // Handle sign up
+        alert('Sign up logic here'); // Implement sign-up logic
+      } else {
+        // Perform initial login logic
+        if (username && password) {
+          setIsVerificationRequired(true); // Set to true to prompt for verification code
+          alert('Please enter the verification code sent to your email or phone.');
+        } else {
+          alert('Please enter valid username and password');
+        }
+      }
     }
   };
 
@@ -24,7 +43,7 @@ const Login = () => {
         <h2>Welcome, {username}!</h2>
       ) : (
         <form onSubmit={handleLogin}>
-          <h2>Login</h2>
+          <h2>{isSignUpMode ? 'Sign Up' : 'Login'}</h2>
           <div>
             <label>Username:</label>
             <input
@@ -43,7 +62,21 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit">Login</button>
+          {isVerificationRequired && (
+            <div>
+              <label>Verification Code:</label>
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                required
+              />
+            </div>
+          )}
+          <button type="submit">{isSignUpMode ? 'Sign Up' : 'Login'}</button>
+          <button type="button" onClick={() => setIsSignUpMode(!isSignUpMode)}>
+            {isSignUpMode ? 'Switch to Login' : 'Switch to Sign Up'}
+          </button>
         </form>
       )}
     </div>
